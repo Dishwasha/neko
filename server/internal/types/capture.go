@@ -28,6 +28,17 @@ type StreamSinkManager interface {
 	Started() bool
 }
 
+type StreamSrcSinkManager interface {
+	OnSample(listener func(sample Sample))
+	Codec() codec.RTPCodec
+
+	Start(codec codec.RTPCodec) error
+	Stop()
+
+	Push(bytes []byte)
+	Started() bool
+}
+
 type CaptureManager interface {
 	Start()
 	Shutdown() error
@@ -35,4 +46,5 @@ type CaptureManager interface {
 	Broadcast() BroadcastManager
 	Audio() StreamSinkManager
 	Video() StreamSinkManager
+	Screenshare() StreamSrcSinkManager
 }

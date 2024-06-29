@@ -1,7 +1,7 @@
 ARG UBUNTU_RELEASE=20.04
-ARG CUDA_VERSION=11.4.3
+ARG CUDA_VERSION=12.5.0
 ARG VIRTUALGL_VERSION=3.1
-ARG GSTREAMER_VERSION=1.20
+ARG GSTREAMER_VERSION=1.24.5
 
 #
 # STAGE 0: Build gstreamer with nvidia plugins.
@@ -20,7 +20,7 @@ RUN set -eux; \
         # Install pip and ninja
         python3-pip python-gi-dev ninja-build \
         # Install build deps
-        autopoint autoconf automake autotools-dev libtool gettext bison flex gtk-doc-tools \
+        autopoint autoconf automake autotools-dev libtool gettext bison flex gtk-doc-tools nasm \
         # Install libraries
         librtmp-dev \
         libvo-aacenc-dev \

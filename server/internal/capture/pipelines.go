@@ -121,19 +121,40 @@ func NewVideoPipeline(rtpCodec codec.RTPCodec, display string, pipelineSrc strin
 			return "", err
 		}
 
-		pipelineStr = strings.Join([]string{
-			fmt.Sprintf(videoSrc, display, fps),
-			"av1enc",
-			fmt.Sprintf("target-bitrate=%d", bitrate*650),
-			"cpu-used=4",
-			"end-usage=cbr",
-			// "usage-profile=realtime",
-			"undershoot=95",
-			"keyframe-max-dist=25",
-			"min-quantizer=4",
-			"max-quantizer=20",
-			pipelineStr,
-		}, " ")
+		if hwenc == config.HwEncNVENC {
+			if err := gst.CheckPlugins([]string{"nvcodec"}); err != nil {
+				return "", err
+			}
+
+			// pipelineStr = fmt.Sprintf(videoSrc+"video/x-raw,format=NV12 ! nvav1enc target-bitrate=%d cpu-used=4 end-usage=cbr undershoot=95 keyframe-max-dist=25 min-quantizer=4 max-quantizer=20 ! video/x-av1,stream-format=byte-stream,profile=constrained-baseline"+pipelineStr, display, fps, bitrate)
+			pipelineStr = strings.Join([]string{
+				fmt.Sprintf(videoSrc, display, fps),
+				"nvav1enc",
+				fmt.Sprintf("target-bitrate=%d", bitrate*650),
+				"cpu-used=4",
+				"end-usage=cbr",
+				// "usage-profile=realtime",
+				"undershoot=95",
+				"keyframe-max-dist=25",
+				"min-quantizer=4",
+				"max-quantizer=20",
+				pipelineStr,
+			}, " ")
+		} else {
+			pipelineStr = strings.Join([]string{
+				fmt.Sprintf(videoSrc, display, fps),
+				"av1enc",
+				fmt.Sprintf("target-bitrate=%d", bitrate*650),
+				"cpu-used=4",
+				"end-usage=cbr",
+				// "usage-profile=realtime",
+				"undershoot=95",
+				"keyframe-max-dist=25",
+				"min-quantizer=4",
+				"max-quantizer=20",
+				pipelineStr,
+			}, " ")
+		}
 	case codec.H264().Name:
 		if err := gst.CheckPlugins([]string{"ximagesrc"}); err != nil {
 			return "", err

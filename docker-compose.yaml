@@ -1,7 +1,7 @@
 version: "3.4"
 services:
   neko:
-    image: "m1k1o/neko:firefox"
+    image: m1k1o/neko:nvidia-google-chrome
     restart: "unless-stopped"
     shm_size: "2gb"
     ports:
@@ -13,3 +13,15 @@ services:
       NEKO_PASSWORD_ADMIN: admin
       NEKO_EPR: 52000-52100
       NEKO_ICELITE: 1
+      NEKO_VIDEO_CODEC: av1
+      NEKO_NAT1TO1: 192.168.1.115
+      NEKO_HWENC: nvenc
+    cap_add:
+      - SYS_ADMIN
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
